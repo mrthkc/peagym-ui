@@ -3,25 +3,25 @@ import axios from "axios";
 const API_URL = "http://localhost:9090/api/";
 
 class AuthService {
-    login(email, password) {
-        return axios.post(API_URL + "login", {
-                email,
-                password
-            })
-            .then(response => {
-                if (response.data.data.token) {
-                    localStorage.setItem("user", JSON.stringify(response.data.data));
-                }
-                return response.data;
-            });
+    async login(email, password) {
+        const response = await axios.post(API_URL + "login", {
+            email,
+            password
+        });
+
+        if (response.data && response.data.success) {
+            localStorage.setItem("user", JSON.stringify(response.data.data));
+            return response.data;
+        }
+        return response;
     }
   
     logout() {
         localStorage.removeItem("user");
     }
   
-    register(fullname, email, password) {
-        return axios.post(API_URL + "user", {
+    async register(fullname, email, password) {
+        return await axios.post(API_URL + "user", {
             fullname,
             email,
             password

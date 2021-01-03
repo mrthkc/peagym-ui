@@ -20,8 +20,8 @@ export default class Register extends Component {
             fullname: "",
             email: "",
             password: "",
-            successful: false,
-            message: ""
+            success: false,
+            message: null
         };
     }
 
@@ -48,32 +48,29 @@ export default class Register extends Component {
     
         this.setState({
             message: "",
-            successful: false
+            success: false
         });
-    
 
         AuthService.register(
             this.state.fullname,
             this.state.email,
             this.state.password
         ).then(
-            response => {
+            () => {
                 this.setState({
-                    message: response.data.data,
-                    successful: true
+                    message: "Successfully registered. Redirecting login page",
+                    success: true,
                 });
-            },
-            error => {
-                const resMessage =
-                    (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-    
+                setTimeout(() => { 
+                    this.props.history.push('/login');
+                    window.location.reload();
+                }, 1000);
+            }
+        ).catch(
+            () => {
                 this.setState({
-                    successful: false,
-                    message: resMessage
+                    message: "Failed",
+                    success: false,
                 });
             }
         );
@@ -142,7 +139,7 @@ export default class Register extends Component {
                 </Row>
                 <Row className="justify-content-md-center mt-3">
                     {this.state.message && 
-                        <Alert variant={this.state.successful ? "success" : "warning"}>
+                        <Alert variant={this.state.success ? "success" : "warning"}>
                             {this.state.message}
                         </Alert>
                     }

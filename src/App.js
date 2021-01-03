@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Switch, Route, } from "react-router-dom";
+import { Switch, Route, BrowserRouter, } from "react-router-dom";
 
 import AuthService from "./services/auth.service";
 
@@ -17,6 +17,7 @@ import Profile from "./components/Profile";
 class App extends Component {
     constructor(props) {
         super(props);
+        
         this.logOut = this.logOut.bind(this);
         this.state = {
             currentUser: undefined,
@@ -42,48 +43,48 @@ class App extends Component {
     render() {
         const { currentUser } = this.state;
         return (
-            <>
-            <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="/">PeaGym</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                {currentUser && (
-                    <>
-                    <Nav className="mr-auto">
-                        <Nav.Link href="/">Home</Nav.Link>
-                    </Nav>
-                    <SplitButton 
-                        navbar
-                        title={currentUser.uemail}
-                        href={"/profile/" + currentUser.uid}
-                        variant="primary"
-                        className="justify-content-end"
-                        id="user-nav-dropdown"
-                    >
-                        <Dropdown.Item href={"/profile/" + currentUser.uid}>Profile</Dropdown.Item>
-                        <Dropdown.Divider />
-                        <Dropdown.Item href="/login" onClick={this.logOut}>Logout</Dropdown.Item>
-                    </SplitButton>
-                    </>
-                )}
+            <BrowserRouter>
+                <Navbar bg="light" expand="lg">
+                    <Navbar.Brand href="/">PeaGym</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                    {currentUser && (
+                        <>
+                        <Nav className="mr-auto">
+                            <Nav.Link href="/">Home</Nav.Link>
+                        </Nav>
+                        <SplitButton 
+                            navbar
+                            title={currentUser.uemail}
+                            href={"/profile/" + currentUser.uid}
+                            variant="primary"
+                            className="justify-content-end"
+                            id="user-nav-dropdown"
+                        >
+                            <Dropdown.Item href={"/profile/" + currentUser.uid}>Profile</Dropdown.Item>
+                            <Dropdown.Divider />
+                            <Dropdown.Item href="/login" onClick={this.logOut}>Logout</Dropdown.Item>
+                        </SplitButton>
+                        </>
+                    )}
 
-                {!currentUser && (
-                    <Nav className="ml-auto">
-                        <Button variant="primary" href="/login">Login</Button>
-                        <Button className="ml-1" variant="info" href="/register">Register</Button>
-                    </Nav>
-                )}
-                    
-                </Navbar.Collapse>
-            </Navbar>
+                    {!currentUser && (
+                        <Nav className="ml-auto">
+                            <Button variant="primary" href="/login">Login</Button>
+                            <Button className="ml-1" variant="info" href="/register">Register</Button>
+                        </Nav>
+                    )}
+                        
+                    </Navbar.Collapse>
+                </Navbar>
 
-            <Switch>
-                <Route exact path={["/", "/home"]} component={Home} />
-                <Route path={["/profile/:uid"]} component={Profile} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/register" component={Register} />
-            </Switch>
-            </>
+                <Switch>
+                    <Route exact path={["/", "/home"]} component={Home} />
+                    <Route path={["/profile/:uid"]} component={Profile} />
+                    <Route exact path="/login" component={Login} />
+                    <Route exact path="/register" component={Register} />
+                </Switch>
+            </BrowserRouter>
         )
     }
 }

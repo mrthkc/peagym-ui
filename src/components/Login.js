@@ -8,9 +8,10 @@ import Alert from 'react-bootstrap/Alert';
 
 import AuthService from "../services/auth.service";
 
-export default class Login extends Component {
+class Login extends Component {
     constructor(props) {
         super(props);
+
         this.handleLogin = this.handleLogin.bind(this);
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
@@ -19,7 +20,8 @@ export default class Login extends Component {
             username: "",
             password: "",
             loading: false,
-            message: "",
+            message: null,
+            success: false,
         };
     }
 
@@ -37,34 +39,39 @@ export default class Login extends Component {
 
     handleLogin(e) {
         e.preventDefault();
-    
         this.setState({
-            message: "",
             loading: true,
         });
-    
+
         AuthService.login(this.state.username, this.state.password).then(
             () => {
-                this.props.history.push("/");
-                window.location.reload();
-            },
-            error => {
-                const resMessage =
-                    (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-    
+                this.setState({
+                    message: "Success",
+                    success: true,
+                });
+                setTimeout(() => { 
+                    this.props.history.push('/');
+                    window.location.reload();
+                }, 250);
+            }
+        ).catch(
+            () => {
+                this.setState({
+                    message: "Failed",
+                    success: false,
+                });
+            }
+        ).finally(
+            () => {
                 this.setState({
                     loading: false,
-                    message: resMessage,
                 });
             }
         );
     }
 
     render() {
+        const { loading, message, success } = this.state;
         return (
             <Container>
                 <Row className="justify-content-md-center">
@@ -105,7 +112,7 @@ export default class Login extends Component {
                             <Button
                                 variant="primary"
                                 type="submit"
-                                disabled={this.state.loading}
+                                disabled={loading}
                             >
                                 Login
                             </Button>
@@ -113,14 +120,15 @@ export default class Login extends Component {
                         
                     </Col>
                 </Row>
-                <Row className="justify-content-md-center mt-3">
-                    {this.state.message && 
-                        <Alert variant={this.state.successful ? "success" : "warning"}>
-                            {this.state.message}
-                        </Alert>
-                    }
-                </Row>
+                {message && <Row className="justify-content-md-center mt-3">
+                    <Alert variant={success ? "success": "warning"}>
+                        {message}
+                    </Alert>
+                </Row>}
+                
             </Container>
         );
     }
 }
+
+export default Login;
